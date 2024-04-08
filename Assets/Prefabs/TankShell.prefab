@@ -95,10 +95,10 @@ SphereCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1212014762839524587}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.7
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1212014762839524588
 MonoBehaviour:
@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bad84491b40df1149865e1a8dbae3fee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageDone: 0
+  damageDone: 10
   owner: {fileID: 0}
 --- !u!54 &7712960004314301350
 Rigidbody:

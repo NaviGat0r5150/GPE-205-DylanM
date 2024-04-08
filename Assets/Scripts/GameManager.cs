@@ -18,7 +18,10 @@ public class GameManager : MonoBehaviour
 
     public List<PlayerController> players;
 
-    // Awake-called when the object is first created
+ private void Start()
+    {
+        SpawnPlayer();
+    }
 
     private void Awake()
     {
@@ -35,20 +38,22 @@ public class GameManager : MonoBehaviour
 
     }
 
-    private void Start()
-    {
-        SpawnPlayer();
-    }
+   
     public void SpawnPlayer()
         {
         GameObject newPlayerObj = Instantiate(playerControllerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
 
-        GameObject newPawnObj = Instantiate(tankPawnPrefab, playerSpawnTransform.position, Quaternion.identity) as GameObject;
+        GameObject newPawnObj = Instantiate(tankPawnPrefab, playerSpawnTransform.position, playerSpawnTransform.rotation) as GameObject;
 
-        Controller newPlayerController = newPlayerObj.GetComponent<Controller>();  
+        Controller newController = newPlayerObj.GetComponent<Controller>();  
 
-        Pawn newPlayerPawn = newPawnObj.GetComponent<Pawn>();
+        Pawn newPawn = newPawnObj.GetComponent<Pawn>();
 
-        newPlayerController.pawn = newPlayerPawn;
+        newPawnObj.AddComponent<NoiseMaker>();
+        newPawn.noiseMaker = newPawnObj.GetComponent<NoiseMaker>();
+        newPawn.noiseMakerVolume = 3;
+
+        newController.pawn = newPawn;
     }
+
 }

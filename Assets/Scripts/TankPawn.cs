@@ -1,16 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 public class TankPawn : Pawn
 
 {
-
-    public float timerDelay = 1.0f;
+    
+    public float timerDelay;
     private float nextEventTime;
     // Start is called before the first frame update
     public override void Start()
     {
+        float secondsPerShot;
+        if(fireRate <= 0)
+        {
+            secondsPerShot = Mathf.Infinity;
+        }
+        else
+        {
+            secondsPerShot = 1 / fireRate;
+        }
+        timerDelay = secondsPerShot;
         nextEventTime = Time.time + timerDelay;
         base.Start();
     }
@@ -51,17 +62,44 @@ public class TankPawn : Pawn
     public override void Shoot()
     {
         if (Time.time >= nextEventTime)
-        {
-            Debug.Log("It’s me!");
-            nextEventTime = Time.time + timerDelay;
+        { 
             shooter.Shoot(shellPrefab, fireForce, damageDone, shellLifespan);
+            nextEventTime = Time.time + timerDelay;
         }
     }
 
+    public override void RotateTowards(Vector3 targetPosition)
+    {
+        //find the vector to the target
+        Vector3 vectorToTarget = targetPosition - transform.position;
+        //find the rotation to look down that vector
+        Quaternion targetRotation = Quaternion.LookRotation(vectorToTarget, Vector3.up);
+        //then we rotate closer to that vector, but at the current turnspeed
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+    }
 
+    public override void MakeNoise()
+    {
+        if (noiseMaker != null)
+        {
+            noiseMaker.volumeDistance = noiseMakerVolume;
+        }
+        else Debug.Log("NUH UH");
+    }
 
-
-
-
-
+    public override void StopNoise()
+    {
+        if (noiseMaker != null)
+        {
+            noiseMaker.volumeDistance = 0;
+        }
+    }
 }
+
+
+
+
+
+
+
+
