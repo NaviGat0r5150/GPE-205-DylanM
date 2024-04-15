@@ -36,6 +36,9 @@ public class AIController : Controller
 
    public bool loopPatrol;
 
+    private float fleeStartTime;
+    public float fleeDuration = 3;
+
 
     //obstacle avoidance 
 
@@ -91,7 +94,7 @@ public class AIController : Controller
                 //do work for guard state
                 DoGuardState();
                 //check for transitions
-                if (IsDistanceLessThan(target, 10) || (IsCanHear(target)) || (IsCanSee(target)))
+                if (IsDistanceLessThan(target, 7) || (IsCanHear(target)) || (IsCanSee(target)))
                 {
                     if (chase == true)
                     {
@@ -118,13 +121,13 @@ public class AIController : Controller
                 }
 
                 //check for transitions
-                if (!IsDistanceLessThan(target, 10) && (!IsCanHear(target)) && (!IsCanSee(target)))
+                if (!IsDistanceLessThan(target, 7) && (!IsCanHear(target)) && (!IsCanSee(target)))
                 {
                     ChangeState(AIState.Patrol);
                 }
 
                 //if close enough, attack
-                if (IsDistanceLessThan(target, 7))
+                if (IsDistanceLessThan(target, 5))
                 {
                     if (attack == true)
                         ChangeState(AIState.Attack);
@@ -136,7 +139,7 @@ public class AIController : Controller
                 //do work for attack state
                 DoAttackState();
                 //check for transitions
-                if (!IsDistanceLessThan(target, 7))
+                if (!IsDistanceLessThan(target, 5))
                 {
                     ChangeState(AIState.Chase);
                 }
@@ -147,11 +150,20 @@ public class AIController : Controller
             case AIState.Flee:
                 //do work for flee
                 DoFleeState();
-                if (!IsDistanceLessThan(target, 10) && (!IsCanHear(target)) && (!IsCanSee(target)))
+                if (!IsDistanceLessThan(target, 7) && (!IsCanHear(target)) && (!IsCanSee(target)))
                 {
-                    ChangeState(AIState.Guard);
+    
+                        if (patrol == true)
+                        {
+                            ChangeState(AIState.Patrol);
+                        }
+                        else
+                        {
+                            ChangeState(AIState.Guard);
+                        }
+                    
                 }
-                    break;
+                break;
 
 
             //patrol state------------------
@@ -160,11 +172,16 @@ public class AIController : Controller
                 DoPatrolState();
 
                 
-                if (IsDistanceLessThan(target, 10) || (IsCanHear(target)) || (IsCanSee(target)))
+                if (IsDistanceLessThan(target, 7) || (IsCanHear(target)) || (IsCanSee(target)))
                 {
                     if (chase == true)
                     {
                         ChangeState(AIState.Chase);
+                    }
+
+                    if (flee == true)
+                    {
+                        ChangeState(AIState.Flee); 
                     }
                 }
 
@@ -209,7 +226,7 @@ public class AIController : Controller
             //doing attack state
             Debug.Log("I am now attacking!");
             // chase
-            Seek(target);
+            pawn.RotateTowards(target.transform.position);
             //shoot
             Shoot();
         }
@@ -221,31 +238,26 @@ public class AIController : Controller
     {
         Debug.Log("I am running away!");
 
+        // Start flee timer when entering the Flee state
+        fleeStartTime = Time.time;
+
         // Calculate the direction away from the target
         Vector3 fleeDirection = pawn.transform.position - target.transform.position;
-        // Normalize the flee direction
         fleeDirection.Normalize();
 
         // Calculate the desired position to flee to
         Vector3 fleePosition = pawn.transform.position + fleeDirection * fleeDistance;
 
-        // Check for obstacles in the way
-        RaycastHit hit;
-        if (Physics.Raycast(pawn.transform.position, fleeDirection, out hit, avoidanceDistance, obstacleMask))
-        {
-            // If an obstacle is detected, calculate a new flee direction away from the obstacle
-            fleeDirection = Vector3.Reflect(fleeDirection, hit.normal);
-            fleePosition = pawn.transform.position + fleeDirection * fleeDistance;
-        }
+        // Move the AI towards the flee position
+        pawn.transform.position = Vector3.MoveTowards(pawn.transform.position, fleePosition, speed * Time.deltaTime);
 
-        // Move the pawn towards the flee position smoothly (using its normal movement speed)
-        float moveSpeed = pawn.moveSpeed;
-        pawn.transform.position = Vector3.MoveTowards(pawn.transform.position, fleePosition, moveSpeed * Time.deltaTime);
-
-        // Rotate towards the desired flee direction (quicker rotation)
+        // Rotate towards the desired flee direction 
         Quaternion targetRotation = Quaternion.LookRotation(fleeDirection);
-        float rotationSpeed = 360f; 
+        float rotationSpeed = 360f;
         pawn.transform.rotation = Quaternion.RotateTowards(pawn.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+  
+      
     }
 
     //------------------------------------------------------------------------------------
@@ -323,7 +335,6 @@ public class AIController : Controller
         // Move forward towards the calculated direction
         pawn.MoveForward();
     }
-
 
     //----------------------------------
 

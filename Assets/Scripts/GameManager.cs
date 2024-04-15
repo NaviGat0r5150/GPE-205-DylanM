@@ -3,24 +3,33 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
 
     public static GameManager instance;
 
+    [Header("Prefabs")]
     public GameObject playerControllerPrefab;
     public GameObject tankPawnPrefab;
-
     public Transform playerSpawnTransform;
 
     //making a list of player controllers for possible multiplayer
 
     public List<PlayerController> players;
 
- private void Start()
+    [Space(5)]
+    [Header("Game Over Stuff")]
+    public Text gameOverText;
+    public Image youLoseImage;
+    public float highScore;
+
+
+
+    private void Start()
     {
-        SpawnPlayer();
+    SpawnPlayer();
     }
 
     private void Awake()

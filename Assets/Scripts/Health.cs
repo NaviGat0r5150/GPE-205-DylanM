@@ -34,6 +34,7 @@ public class Health : MonoBehaviour
     {
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        Debug.Log(gameObject.name + "healed " + amount + "health");
     }
 
     public void Die(Pawn source)// parameter - input to a method

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AICon2 : AIController
+public class AICon2Mouse : AIController
 {
 
     // Start is called before the first frame update
