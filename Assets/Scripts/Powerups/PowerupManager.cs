@@ -32,7 +32,7 @@ public class PowerupManager : MonoBehaviour
 
     public void Add (Powerup powerupToAdd)
     {
-        //TODO CReate add method
+        //Create add method
         powerupToAdd.Apply(this);
 
         powerups.Add(powerupToAdd);

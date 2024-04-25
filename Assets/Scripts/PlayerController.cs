@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : Controller
 {
@@ -78,14 +79,18 @@ public class PlayerController : Controller
     }
      public void OnDestroy()
     {
+        SceneManager.LoadScene("GameOver");
         //if we have a gm
-        if(GameManager.instance != null)
+        if (GameManager.instance != null)
         {
             //instance is tracking the destroyed player
             if(GameManager.instance.players != null)
             {
                 //deregister wiht GM
                 GameManager.instance.players.Remove(this);
+
+                //transfer to the end screen
+              
             }
         }
     }

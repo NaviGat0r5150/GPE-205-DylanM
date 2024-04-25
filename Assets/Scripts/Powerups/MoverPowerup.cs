@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class ShooterPowerup : Powerup
-{
 
-    public float fireRateAddition;
-    
+public class MoverPowerup : Powerup
+{
+    public float movementAddition;
+
     public override void Apply(PowerupManager target)
     {
-       //get the pawn comp of the other object
-       TankPawn targetTankpawn = target.GetComponent<TankPawn>();
+        //get the pawn comp of the other object
+        TankPawn targetTankpawn = target.GetComponent<TankPawn>();
 
         //if there is a pawn comp.
         if (targetTankpawn != null)
         {
-            targetTankpawn.IncreaseFireRate(fireRateAddition);
+            targetTankpawn.IncreaseMovementSpeed(movementAddition);
         }
-        
+
     }
 
     public override void Remove(PowerupManager target)
@@ -30,7 +30,7 @@ public class ShooterPowerup : Powerup
         //if there is a pawn comp.
         if (targetTankpawn != null)
         {
-            targetTankpawn.DecreaseFireRate(fireRateAddition);
+            targetTankpawn.DecreaseMovementSpeed(movementAddition);
         }
     }
 }

@@ -94,6 +94,43 @@ public class TankPawn : Pawn
             noiseMaker.volumeDistance = 0;
         }
     }
+
+    public override void IncreaseFireRate(float amount)
+    {
+        if (shooter != null)
+        {
+            timerDelay /= amount;
+            timerDelay = Mathf.Clamp(timerDelay, 0, Mathf.Infinity);
+            Debug.Log(gameObject.name + "shoots " + amount + " faster");
+            
+        }
+    }
+    public override void DecreaseFireRate(float amount)
+    {
+        if (shooter != null)
+        {
+            timerDelay *= amount;
+
+        }
+    }
+    public override void IncreaseMovementSpeed(float amount)
+    {
+        if (mover != null)
+        {
+            moveSpeed += amount;
+            moveSpeed = Mathf.Clamp(moveSpeed, 0, Mathf.Infinity);
+        }
+    }
+    public override void DecreaseMovementSpeed(float amount)
+    {
+        if (mover != null)
+        {
+            moveSpeed -= amount;
+
+        }
+    }
+
+
 }
 
 

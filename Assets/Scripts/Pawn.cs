@@ -59,6 +59,10 @@ public abstract class Pawn : MonoBehaviour
     // Variable for how long our bullets survive if they don't collide
     public float shellLifespan;
 
+    public abstract void IncreaseFireRate(float amount);
+    public abstract void DecreaseFireRate(float amount);
 
+    public abstract void IncreaseMovementSpeed(float amount);   
+    public abstract void DecreaseMovementSpeed(float amount);
 
 }

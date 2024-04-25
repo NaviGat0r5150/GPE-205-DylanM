@@ -1145,6 +1145,7 @@ Transform:
   - {fileID: 1121563094145181473}
   - {fileID: 4781654735153404601}
   - {fileID: 2935985602552835689}
+  - {fileID: 8627763658437848917}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7758,6 +7759,72 @@ Transform:
   m_Father: {fileID: 421816}
   m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8375856986900107270
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8627763658437848917}
+  - component: {fileID: 9167938868212242322}
+  m_Layer: 0
+  m_Name: PatrolAI_ (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8627763658437848917
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8375856986900107270}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 21.01, y: 2.37, z: 19.66}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 421816}
+  m_RootOrder: 45
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9167938868212242322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8375856986900107270}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62e15b3f41b65954eb42c69766b4f04b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pawn: {fileID: 2032332655, guid: 4cf4ad879dba7d34ea26848c0c75e060, type: 3}
+  currentState: 0
+  target: {fileID: 4675925194379318266, guid: 858870ea5961614448c3accd7a20c3b6, type: 3}
+  waypoints: []
+  waypointStopDistance: 2
+  fleeDistance: 0
+  hearingDistance: 15
+  sightDistance: 15
+  fieldOfView: 20
+  patrol: 1
+  flee: 0
+  attack: 1
+  chase: 1
+  cansee: 1
+  canhear: 1
+  loopPatrol: 1
+  fleeDuration: 3
+  speed: 5
+  avoidanceDistance: 2
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &8451245272664185483
 GameObject:
   m_ObjectHideFlags: 0
@@ -7961,7 +8028,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0de7b3f4c716e374aac8043a4be29e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pickupPrefab: {fileID: 161509585260291674, guid: c0dadce5bb04d484faac79138357421a, type: 3}
+  pickupPrefab: {fileID: 3040157226626593477, guid: 9b4c488eb2a7ea9419e6eaacb9a4e647, type: 3}
   spawnDelay: 10
 --- !u!1001 &648874428815008235
 PrefabInstance:

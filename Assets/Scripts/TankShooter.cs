@@ -49,7 +49,10 @@ public class TankShooter : Shooter
             rigidbody.AddForce(firepointTransform.forward * fireForce);
         }
 
+
         Destroy(newShell, lifespan);
     }
+
+   
 }
 

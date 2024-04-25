@@ -423,26 +423,44 @@ public class AIController : Controller
 
     public bool IsCanSee(GameObject target)
     {
-        if(cansee == false)
+        if (!cansee)
         {
             return false;
         }
-        //find the vector from the agent to the target
-        Vector3 agentToTargetVector = target.transform.position - pawn.transform.position;
-        //find then angle between the direction our agent is facing, and vectorto target
-        float angleToTarget = Vector3.Angle(agentToTargetVector, pawn.transform.forward);
 
-        if (Vector3.Distance(pawn.transform.position, target.transform.position) < sightDistance && angleToTarget < fieldOfView)
+        Vector3 directionToTarget = target.transform.position - pawn.transform.position;
+        float distanceToTarget = directionToTarget.magnitude;
+        directionToTarget.Normalize();
+
+        // Check if the player is within sight distance
+        if (distanceToTarget <= sightDistance)
+        {
+            // Perform raycast to check for obstacles between AI and player
+            RaycastHit hit;
+            if (Physics.Raycast(pawn.transform.position, directionToTarget, out hit, distanceToTarget, obstacleMask))
             {
-                Debug.Log("in field of view");
+                // If the ray hits an obstacle, check if it's the player
+                if (hit.collider.gameObject != target)
+                {
+                    // Player is behind an obstacle
+                    return false;
+                }
+            }
+
+            // Find the angle between tanbks forward direction and direction to the player
+            float angleToTarget = Vector3.Angle(pawn.transform.forward, directionToTarget);
+
+            // Check if the player is within the tanks field of view
+            if (angleToTarget <= fieldOfView * 0.5f)
+            {
+                // Player is within field of view and not obstructed by obstacles
+                Debug.Log("Player is in field of view and not obstructed.");
                 return true;
             }
-        else
-        {
-
-            return false;
         }
 
+        // Player is either out of sight range or obstructed by obstacles
+        return false;
 
     }
 }
