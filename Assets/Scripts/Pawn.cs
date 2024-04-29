@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class Pawn : MonoBehaviour
 {
+    public Rigidbody rb; // Reference to the Rigidbody component
+
     // This is the Variable for move speed
     public float moveSpeed;
     // This is the Variable for turn speed
@@ -20,6 +22,8 @@ public abstract class Pawn : MonoBehaviour
     public float noiseMakerVolume;
 
     public NoiseMaker noiseMaker;
+
+    protected bool isMoving = false;
 
     //Start is called before the first frame update
     public virtual void Start()
@@ -65,4 +69,24 @@ public abstract class Pawn : MonoBehaviour
     public abstract void IncreaseMovementSpeed(float amount);   
     public abstract void DecreaseMovementSpeed(float amount);
 
+    public abstract void IncreaseDamageDone(float amount);
+    public abstract void DecreaseDamageDone(float amount);
+
+ 
+
+    // Method to stop movement
+    public virtual void StopMoving()
+    {
+        isMoving = false;
+    }
+
+    // Method to start movement
+    public virtual void StartMoving()
+    {
+        isMoving = true;
+    }
+
+    public abstract void Jump(float jumpForce, Vector3 direction);
 }
+
+

@@ -15,7 +15,7 @@ public class Health : MonoBehaviour
     public float maxLives = 3;
     public float currentLives;
 
-    public float currentScore = 0;
+    public float currentScore;
 
     public Image healthAmountImage;
     private float currentHealthPercentage;
@@ -25,11 +25,19 @@ public class Health : MonoBehaviour
 
     private Health playerHealth;
 
-    // Start is called before the first frame update
+    public AudioSource dieSound;
+    public AudioSource hurtSound;
+    public AudioSource healSound;
+
+    public bool hasShield = false;
+    private bool isDead = false;
+
+    public string sceneName; // Name of the scene to load
+    public KeyCode switchKey = KeyCode.F; // Key to trigger scene switch
 
     public void Start()
     {
-        playerHealth = GetComponent<Health>();
+        playerHealth = GetComponent<Health > ();
         if (playerHealth != null)
         {
             Health.OnEnemyKilled += IncrementScore;
@@ -58,6 +66,15 @@ public class Health : MonoBehaviour
         LivesText.text = "Lives: " + currentLives;
 
         ScoreText.text = "Score: " + currentScore;
+
+        checkHealth();
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            // Load the specified scene
+            SceneManager.LoadScene("WIN");
+
+        }
     }
 
 
@@ -65,21 +82,32 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(float amount, Pawn source)
     {
-        currentHealth -= amount;
-        Debug.Log(source.name + "did " + amount + " damage to " + gameObject.name);
+        if (!hasShield) // Check if the shield is not active
+        {
+            currentHealth -= amount;
+            Debug.Log(source.name + "did " + amount + " damage to " + gameObject.name);
+
+            hurtSound.PlayOneShot(hurtSound.clip);
+        }
+        else
+        {
+            Debug.Log("Shield is active. No damage taken."); //shioeld active
+        }
 
 
 
         if (currentHealth <= 0)
         {
             currentLives -= 1;
-
+            dieSound.PlayOneShot(dieSound.clip);
 
             gameObject.transform.position = new Vector3(0f, 20f, 0f);
 
             if (currentLives <= 0)
             {
                 Die(source);// Argument - the actual value passed into a function call
+
+
             }
             else
             {
@@ -91,6 +119,7 @@ public class Health : MonoBehaviour
 
     public void RepenishHealth(float amount)
     {
+        healSound.PlayOneShot(healSound.clip);
         currentHealth += amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
         Debug.Log(gameObject.name + "healed " + amount + "health");
@@ -100,39 +129,59 @@ public class Health : MonoBehaviour
 
     public void Die(Pawn source)
     {
-        // Check if the GameObject has a "Player" tag before loading the scene
+        dieSound.PlayOneShot(dieSound.clip);
+
         if (gameObject.CompareTag("Player"))
         {
-            // Load the "GameOver" scene
+            // Store the final score in PlayerPrefs
+            PlayerPrefs.SetFloat("FinalScore", currentScore);
+            // Load the game over scene
             SceneManager.LoadScene("GameOver");
-            Destroy(gameObject);
         }
         else
         {
-            // If the GameObject does not have a "Player" tag, destroy it
+            // Notify listeners that an enemy was killed
+            OnEnemyKilled?.Invoke();
+            // Destroy this game object
             Destroy(gameObject);
-
-            if (OnEnemyKilled != null)
-            {
-                OnEnemyKilled(); // Trigger the event
-            }
-
         }
     }
 
-        void OnDestroy()
+    void OnDestroy()
+    {
+        if (playerHealth != null)
         {
-            if (playerHealth != null)
-            {
-                Health.OnEnemyKilled -= IncrementScore;
-            }
-        }
-
-        void IncrementScore()
-        {
-            playerHealth.currentScore += 1; 
+            Health.OnEnemyKilled -= IncrementScore;
         }
     }
 
-  
+    void IncrementScore()
+    {
+        playerHealth.currentScore += 1;
+    }
+
+    public void checkHealth()
+    {
+        if (currentHealth <= 0)
+        {
+            currentLives -= 1;
+            dieSound.PlayOneShot(dieSound.clip);
+
+            gameObject.transform.position = new Vector3(0f, 20f, 0f);
+
+            if (currentLives <= 0)
+            {
+
+                //this BREAKS THE GAME
+
+
+            }
+            else
+            {
+                currentHealth = maxHealth;
+
+            }
+        }
+    }
+}
 

@@ -34,10 +34,19 @@ public class AIController : Controller
     public bool cansee;
     public bool canhear;
 
-   public bool loopPatrol;
+    public bool loopPatrol;
 
     private float fleeStartTime;
     public float fleeDuration = 3;
+
+    //slime variables
+
+    public bool slime = false;
+    private bool isJumping = false;
+    private float jumpTimer = 0f;
+    public float jumpInterval = 1f;
+
+    public Rigidbody rb; 
 
 
     //obstacle avoidance 
@@ -55,17 +64,21 @@ public class AIController : Controller
 
         if (patrol == true)
         {
-        ChangeState(AIState.Patrol);
+            ChangeState(AIState.Patrol);
         }
         else
         {
-        ChangeState(AIState.Guard);
+            ChangeState(AIState.Guard);
 
         }
-        
 
-    
-    
+        rb = GetComponentInChildren<Rigidbody>();
+
+        if (rb == null)
+        {
+            Debug.LogError("Rigidbody component not found in the AIController or its children.");
+        }
+
         // this runs the parent base start
         base.Start();
     }
@@ -75,13 +88,24 @@ public class AIController : Controller
     {
         TargetPlayerOne();
 
-    
-        // make descisions
+        // Make decisions
         ProcessInputs();
-        
-        // this runs the parent base update
+
+        // Handle jumping behavior
+        if (slime && CanJump())
+        {
+            JumpTowardsPlayer();
+            jumpTimer = Time.time;
+        }
+
         base.Update();
     }
+    private bool CanJump()
+    {
+        return !isJumping && Time.time - jumpTimer >= jumpInterval;
+    }
+
+
     // this is oging to be responsible for making AI descicions 
     public override void ProcessInputs()
     {
@@ -106,8 +130,8 @@ public class AIController : Controller
                     }
                 }
 
-                    
-                    break;
+
+                break;
 
             case AIState.Chase:
                 //do work for chase
@@ -152,16 +176,16 @@ public class AIController : Controller
                 DoFleeState();
                 if (!IsDistanceLessThan(target, 7) && (!IsCanHear(target)) && (!IsCanSee(target)))
                 {
-    
-                        if (patrol == true)
-                        {
-                            ChangeState(AIState.Patrol);
-                        }
-                        else
-                        {
-                            ChangeState(AIState.Guard);
-                        }
-                    
+
+                    if (patrol == true)
+                    {
+                        ChangeState(AIState.Patrol);
+                    }
+                    else
+                    {
+                        ChangeState(AIState.Guard);
+                    }
+
                 }
                 break;
 
@@ -171,7 +195,7 @@ public class AIController : Controller
                 //do work for patrol stat
                 DoPatrolState();
 
-                
+
                 if (IsDistanceLessThan(target, 7) || (IsCanHear(target)) || (IsCanSee(target)))
                 {
                     if (chase == true)
@@ -181,7 +205,7 @@ public class AIController : Controller
 
                     if (flee == true)
                     {
-                        ChangeState(AIState.Flee); 
+                        ChangeState(AIState.Flee);
                     }
                 }
 
@@ -191,7 +215,8 @@ public class AIController : Controller
         }
     }
 
-
+    // Jump towards the player
+   
     protected void DoGuardState()
     {
         //doing guard state
@@ -208,10 +233,10 @@ public class AIController : Controller
     protected void DoChaseState()
     {
         if (chase == true)
-        { 
-        //doing chase state
-        Debug.Log("I am now chasing!");
-        Seek(target);
+        {
+            //doing chase state
+            Debug.Log("I am now chasing!");
+            Seek(target);
         }
     }
 
@@ -256,8 +281,8 @@ public class AIController : Controller
         float rotationSpeed = 360f;
         pawn.transform.rotation = Quaternion.RotateTowards(pawn.transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-  
-      
+
+
     }
 
     //------------------------------------------------------------------------------------
@@ -368,7 +393,7 @@ public class AIController : Controller
         // if the GM exists
         if (GameManager.instance != null)
         {
-           
+
 
             //and there are players in it
             if (GameManager.instance.players.Count > 0)
@@ -400,19 +425,19 @@ public class AIController : Controller
             return false;
         }
         //if they are making 0 noise, they also cant be heard
-        if(noiseMaker.volumeDistance <= 0)
+        if (noiseMaker.volumeDistance <= 0)
         {
             return false;
         }
         //if they are making noise, add the volume distance to the hearing distanc of the AI
         float totalDistance = noiseMaker.volumeDistance + hearingDistance;
         //if the distance between our pawn and target is close than this:
-        if(Vector3.Distance(pawn.transform.position, target.transform.position) < totalDistance)
+        if (Vector3.Distance(pawn.transform.position, target.transform.position) < totalDistance)
         {
             Debug.Log("I HEAR YOU");
             //-then we can hear the target
             return true;
-            
+
         }
         else
         {
@@ -463,4 +488,49 @@ public class AIController : Controller
         return false;
 
     }
+
+    private void JumpTowardsPlayer()
+    {
+        // Check if the player is within the specified distance
+        if (Vector3.Distance(target.transform.position, pawn.transform.position) <= 15f)
+        {
+            // Set jumping flag to true
+            isJumping = true;
+
+            // Calculate direction towards the player
+            Vector3 direction = (target.transform.position - pawn.transform.position).normalized;
+
+            // Calculate jump force
+            float jumpForce = 10f; // Adjust this value as needed
+
+            // Call the Jump method to perform the jump
+            PerformJump(jumpForce, direction);
+
+            // Reset jumping flag after a delay
+            StartCoroutine(ResetJumpingCoroutine());
+        }
+    }
+
+    // Coroutine to reset jumping flag after a delay
+    private IEnumerator ResetJumpingCoroutine()
+    {
+        yield return new WaitForSeconds(1f); // Adjust the delay as needed
+        isJumping = false;
+    }
+
+    // Method to perform the jump
+    private void PerformJump(float jumpForce, Vector3 direction)
+    {
+        if (rb != null)
+        {
+            // Apply a vertical force to make the pawn jump
+            rb.AddForce(direction * jumpForce + Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+        else
+        {
+            Debug.LogWarning("Rigidbody component is not assigned in the AIController.");
+        }
+    }
+
+
 }

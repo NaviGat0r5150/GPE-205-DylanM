@@ -8,6 +8,10 @@ public class PowerupManager : MonoBehaviour
     #region Variables
     public List<Powerup> powerups;
     public List<Powerup> removedPowereupQueue;
+
+    public AudioSource powerUpSound;
+    public AudioSource powerDownSound;
+
     #endregion Variables
 
     // Start is called before the first frame update
@@ -35,6 +39,8 @@ public class PowerupManager : MonoBehaviour
         //Create add method
         powerupToAdd.Apply(this);
 
+        powerUpSound.PlayOneShot(powerUpSound.clip);
+
         powerups.Add(powerupToAdd);
     }
 
@@ -43,8 +49,10 @@ public class PowerupManager : MonoBehaviour
         // TO DO Create removal method
         powerupToRemove.Remove(this);
 
+        powerDownSound.PlayOneShot(powerDownSound.clip);
+
         //get ready to remove it from the list
-       removedPowereupQueue.Add(powerupToRemove);
+        removedPowereupQueue.Add(powerupToRemove);
     }
 
     public void DecrementPowerupTimers()

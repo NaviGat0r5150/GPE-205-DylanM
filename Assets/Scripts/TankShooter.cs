@@ -6,6 +6,7 @@ using UnityEngine;
 public class TankShooter : Shooter
 {
     public Transform firepointTransform;
+    public AudioSource fireSound;
 
     // Start is called before the first frame update
     public override void Start()
@@ -26,6 +27,7 @@ public class TankShooter : Shooter
 
     public override void Shoot(GameObject shellPrefab, float fireForce, float damageDone, float lifespan)
     {
+
         // Instantiate our projectile
         GameObject newShell = Instantiate(shellPrefab, firepointTransform.position, firepointTransform.rotation) as GameObject;
 
@@ -40,6 +42,8 @@ public class TankShooter : Shooter
             damageOnHit.owner = GetComponent<Pawn>();
         }
 
+        PlayFireSound();
+
         //Get the rigibody
 
         Rigidbody rigidbody = newShell.GetComponent<Rigidbody>();
@@ -50,9 +54,19 @@ public class TankShooter : Shooter
         }
 
 
+
         Destroy(newShell, lifespan);
     }
+    void PlayFireSound()
+    {
+        // Check if the audio source is valid
+        if (fireSound != null)
+        {
+            // Play the fire sound without interrupting other sounds
+            fireSound.PlayOneShot(fireSound.clip);
+        }
+    }
 
-   
+
 }
 

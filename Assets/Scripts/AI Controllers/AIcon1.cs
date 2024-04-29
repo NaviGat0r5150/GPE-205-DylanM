@@ -16,9 +16,15 @@ public class AIcon1 : AIController
 
         // Call the Start method of the parent class (AIController)
         base.Start();
+
+        // Attempt to find the Rigidbody component in the pawn object or its children
+        rb = pawn.GetComponentInChildren<Rigidbody>();
+
+        if (rb == null)
+        {
+            // Print an error message if the Rigidbody is not found
+            Debug.LogError("Rigidbody component not found in the pawn or its children.");
+        }
     }
-
-   
-
-
 }
+    

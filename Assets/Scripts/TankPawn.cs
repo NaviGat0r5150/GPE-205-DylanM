@@ -9,6 +9,11 @@ public class TankPawn : Pawn
     
     public float timerDelay;
     private float nextEventTime;
+
+    public float jumpStrength;
+
+   
+
     // Start is called before the first frame update
     public override void Start()
     {
@@ -43,6 +48,7 @@ public class TankPawn : Pawn
             Debug.LogWarning("Warning: No Mover in TankPawn.MoveForward");
         }
     }
+
 
     public override void MoveBackward()
     {
@@ -128,6 +134,29 @@ public class TankPawn : Pawn
             moveSpeed -= amount;
 
         }
+    }
+
+    public override void Jump(float jumpForce, Vector3 direction)
+    {
+        // Check if the Rigidbody component exists
+        if (rb != null)
+        {
+            // Apply the jump force in the specified direction
+            rb.AddForce(direction * jumpForce, ForceMode.Impulse);
+        }
+        else
+        {
+            Debug.LogWarning("Rigidbody component not found on the pawn.");
+        }
+    }
+
+    public override void IncreaseDamageDone(float amount)
+    {
+        damageDone += amount;
+    }
+    public override void DecreaseDamageDone(float amount)
+    {
+        damageDone -= amount;
     }
 
 
